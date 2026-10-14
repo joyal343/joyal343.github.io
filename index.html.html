@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Science Exhibition — Leaderboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{color-scheme:dark;
+  --bg:#05080f;--panel:#0b1220;--panel-2:#101a2c;--line:#1e293b;--line-2:#131e2f;
+  --text:#f8fafc;--muted:#8a97ab;--dim:#64748b;
+  --blue:#60a5fa;--gold:#fbbf24;--green:#34d399;
+}
+body{font-family:'Inter',Arial,sans-serif;background:var(--bg);background-image:radial-gradient(circle at 50% -10%, #16213a 0%, var(--bg) 55%);background-attachment:fixed;color:var(--text);min-height:100vh;padding:48px 20px 80px;
+  padding-top:calc(48px + env(safe-area-inset-top,0px));padding-bottom:calc(80px + env(safe-area-inset-bottom,0px));}
+.wrap{max-width:900px;margin:0 auto;}
+
+/* ============ HERO ============ */
+.hero-switcher{display:flex;gap:8px;margin-bottom:16px;}
+.hero-switcher button{flex:1;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#0d1524;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--dim);cursor:pointer;transition:.2s;}
+.hero-switcher button.active{background:var(--line);color:#bfdbfe;border-color:#334155;}
+.hero-switcher button:hover{color:#cbd5e1;}
+
+.hero{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);height:300px;margin-bottom:24px;display:none;}
+.hero.active{display:block;}
+.hero svg{position:absolute;inset:0;width:100%;height:100%;}
+.hero-copy{position:absolute;left:0;right:0;bottom:0;padding:26px 32px 24px;background:linear-gradient(to top, rgba(3,6,12,.92) 15%, rgba(3,6,12,.55) 55%, transparent 100%);}
+.hero-copy .k{font-size:13px;font-weight:600;color:#7dd3fc;margin-bottom:6px;}
+.hero-copy h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(28px,4vw,38px);letter-spacing:-.02em;color:#fff;margin-bottom:6px;}
+.hero-copy p{font-size:14px;color:#b6c2d4;max-width:46ch;}
+
+@media(max-width:600px){
+  .hero{height:250px;}
+  .hero-copy{padding:20px 20px 18px;}
+}
+
+.switcher{display:flex;gap:8px;margin-bottom:22px;}
+.switcher button{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#111c30;font-family:inherit;font-size:13px;font-weight:600;color:#94a3b8;cursor:pointer;transition:.2s;}
+.switcher button.active{background:var(--line);color:#93c5fd;border-color:#334155;}
+.variation{display:none;}
+.variation.active{display:block;}
+
+.icon{width:20px;height:20px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ============ NEON LAB ============ */
+.neon-card{background:var(--panel);border-radius:16px;padding:32px;border:1px solid var(--line);box-shadow:0 12px 32px rgba(0,0,0,.5);}
+.neon-card h2{font-size:20px;font-weight:700;color:#f1f5f9;margin-bottom:3px;}
+.neon-card p{font-size:13px;color:var(--dim);font-weight:500;margin-bottom:28px;}
+.neon-row{margin-bottom:20px;}
+.neon-row:last-child{margin-bottom:0;}
+.neon-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.neon-top .icon{color:var(--c);width:18px;height:18px;filter:drop-shadow(0 0 4px var(--c));}
+.neon-top .label{font-size:13px;font-weight:600;color:#cbd5e1;flex:1;}
+.neon-top .score{font-size:13px;font-weight:700;color:var(--c);font-variant-numeric:tabular-nums;}
+.neon-track{height:10px;border-radius:10px;background:var(--line);overflow:hidden;}
+.neon-fill{height:100%;width:0;border-radius:10px;background:var(--c);box-shadow:0 0 10px var(--c),0 0 2px var(--c);transition:width 1.3s cubic-bezier(.4,0,.2,1);}
+
+.hist-card{margin-top:20px;}
+.hist-card h3{font-size:14px;font-weight:700;color:#f1f5f9;margin-bottom:16px;}
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;}
+.mini-chart{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px 14px 10px;}
+.mini-chart h4{font-size:11px;font-weight:700;color:#93c5fd;margin-bottom:10px;letter-spacing:.01em;}
+.chart-row{display:flex;gap:6px;}
+.y-axis{display:flex;flex-direction:column;justify-content:space-between;height:110px;font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;text-align:right;padding-right:6px;flex-shrink:0;}
+.chart-plot{flex:1;height:110px;display:flex;align-items:flex-end;justify-content:space-around;gap:4px;padding:0 2px;border-left:1px solid #334155;border-bottom:1px solid #334155;background-image:repeating-linear-gradient(to top,#1e293b 0,#1e293b 1px,transparent 1px,transparent 25%);}
+.chart-plot .bar{width:15px;border-radius:3px 3px 0 0;height:0;transition:height 1s cubic-bezier(.4,0,.2,1);}
+.x-labels{display:flex;justify-content:space-around;padding-left:26px;margin-top:5px;}
+.x-labels span{font-size:9px;color:var(--dim);font-weight:600;width:14px;text-align:center;white-space:nowrap;overflow:visible;}
+.hist-legend{display:flex;gap:14px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.hist-legend span{display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;font-weight:600;}
+.hist-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+@media(max-width:520px){.hist-grid{grid-template-columns:1fr 1fr;}}
+
+/* ============ RESULTS ============ */
+.results-card{background:var(--panel);border-radius:16px;padding:32px;border:1px solid var(--line);box-shadow:0 12px 32px rgba(0,0,0,.5);}
+.results-card h2{font-size:20px;font-weight:700;color:#f1f5f9;margin-bottom:3px;}
+.results-card p{font-size:13px;color:var(--dim);font-weight:500;margin-bottom:22px;}
+.filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.filters label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--dim);font-weight:600;}
+.filters select{padding:8px 30px 8px 12px;border-radius:8px;border:1px solid var(--line);background:#111c30 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 8px center/14px;background-color:#111c30;font-family:inherit;font-size:12px;font-weight:600;color:#e2e8f0;cursor:pointer;appearance:none;-webkit-appearance:none;min-width:130px;}
+.filters select:focus{outline:2px solid var(--blue);outline-offset:1px;}
+.table-scroll{overflow-x:auto;}
+table.res-table{width:100%;border-collapse:collapse;font-size:13px;min-width:520px;}
+table.res-table th{text-align:left;font-size:11px;letter-spacing:.02em;color:var(--dim);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);}
+table.res-table td{padding:10px;border-bottom:1px solid var(--line-2);color:#cbd5e1;}
+table.res-table tr:hover td{background:var(--panel-2);}
+.pos-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:800;font-size:12px;color:#0b1220;}
+.pos-1{background:var(--gold);box-shadow:0 0 8px rgba(251,191,36,.7);}
+.pos-2{background:#cbd5e1;box-shadow:0 0 8px rgba(203,213,225,.5);}
+.pos-3{background:#c2793d;box-shadow:0 0 8px rgba(194,121,61,.6);}
+.type-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#94a3b8;}
+.type-pill .icon{width:13px;height:13px;color:var(--dim);}
+
+@media(max-width:480px){.neon-card,.results-card{padding:22px;}}
+
+
+/* =========================================================
+   POLISH PASS — product/UI refinement
+   ========================================================= */
+:root{
+  --bg:#060a12;
+  --panel:#0b1220;
+  --panel-2:#0f192a;
+  --panel-3:#111d30;
+  --line:rgba(148,163,184,.14);
+  --line-strong:rgba(148,163,184,.22);
+  --line-2:rgba(148,163,184,.08);
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --dim:#718096;
+  --blue:#60a5fa;
+  --blue-soft:#93c5fd;
+}
+
+html{scroll-behavior:smooth;}
+body{
+  background:
+    radial-gradient(900px 480px at 50% -12%, rgba(59,130,246,.13), transparent 68%),
+    radial-gradient(700px 420px at 100% 32%, rgba(52,211,153,.045), transparent 72%),
+    var(--bg);
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.16;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:36px 36px;
+  mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 72%);
+}
+.wrap{max-width:980px;}
+
+.hero-switcher,
+.switcher{
+  padding:4px;
+  gap:4px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(10,17,29,.78);
+  box-shadow:0 8px 24px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.025);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+.hero-switcher{margin-bottom:12px;}
+.switcher{margin-bottom:20px;}
+.hero-switcher button,
+.switcher button{
+  position:relative;
+  min-height:38px;
+  padding:9px 14px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#7f8ca3;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.01em;
+  transition:background .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.hero-switcher button:hover,
+.switcher button:hover{color:#dbeafe;background:rgba(148,163,184,.06);}
+.hero-switcher button.active,
+.switcher button.active{
+  color:#eaf3ff;
+  background:linear-gradient(180deg,rgba(59,130,246,.18),rgba(59,130,246,.09));
+  box-shadow:inset 0 0 0 1px rgba(96,165,250,.22),0 4px 14px rgba(0,0,0,.16);
+}
+.hero-switcher button.active::after,
+.switcher button.active::after{
+  content:"";
+  position:absolute;
+  left:18%;right:18%;bottom:3px;height:2px;
+  border-radius:999px;
+  background:var(--blue);
+  opacity:.72;
+}
+
+.hero{
+  height:320px;
+  margin-bottom:20px;
+  border-radius:24px;
+  border:1px solid rgba(148,163,184,.18);
+  box-shadow:0 28px 70px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.025);
+  transform:translateZ(0);
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(120deg,rgba(255,255,255,.045),transparent 26%,transparent 72%,rgba(96,165,250,.04));
+}
+.hero-copy{
+  padding:28px 32px 26px;
+  background:linear-gradient(to top,rgba(3,6,12,.96) 4%,rgba(3,6,12,.76) 40%,rgba(3,6,12,.12) 100%);
+}
+.hero-copy .k{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:9px;
+  padding:5px 9px;
+  border:1px solid rgba(125,211,252,.18);
+  border-radius:999px;
+  background:rgba(14,25,43,.72);
+  color:#a5ddff;
+  font-size:10px;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+.hero-copy .k::before{
+  content:"";
+  width:6px;height:6px;border-radius:50%;
+  background:#60a5fa;
+  box-shadow:0 0 10px rgba(96,165,250,.85);
+}
+.hero-copy h1{
+  max-width:720px;
+  font-size:clamp(30px,4.5vw,44px);
+  line-height:1.02;
+  letter-spacing:-.035em;
+  margin-bottom:9px;
+  text-shadow:0 8px 30px rgba(0,0,0,.28);
+}
+.hero-copy p{font-size:14px;line-height:1.55;color:#aebbd0;max-width:58ch;}
+
+.neon-card,
+.results-card{
+  padding:28px;
+  border-radius:20px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(13,22,36,.94),rgba(10,17,29,.96));
+  box-shadow:0 18px 46px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.024);
+}
+.neon-card h2,.results-card h2{font-size:19px;letter-spacing:-.015em;}
+.neon-card p,.results-card p{color:#74839a;}
+.neon-row{
+  position:relative;
+  padding:13px 0 15px;
+  margin-bottom:0;
+}
+.neon-row + .neon-row{border-top:1px solid rgba(148,163,184,.065);}
+.neon-row:first-of-type{margin-top:2px;}
+.neon-top{margin-bottom:9px;}
+.neon-top .label{font-size:13px;color:#d8e1ed;}
+.neon-top .score{font-size:12px;letter-spacing:.03em;}
+.neon-track{
+  height:8px;
+  border:1px solid rgba(148,163,184,.08);
+  background:#0a1322;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.34);
+}
+.neon-fill{box-shadow:0 0 12px color-mix(in srgb,var(--c) 55%,transparent);}
+
+.hist-card{margin-top:14px;}
+.hist-card h3{margin-bottom:14px;color:#dbe5f1;}
+.hist-grid{gap:12px;}
+.mini-chart{
+  padding:13px;
+  border-radius:14px;
+  border:1px solid rgba(148,163,184,.11);
+  background:linear-gradient(180deg,rgba(17,29,48,.86),rgba(12,21,35,.92));
+}
+.mini-chart:hover{border-color:rgba(96,165,250,.20);}
+.mini-chart h4{color:#a9cfff;margin-bottom:12px;}
+.chart-plot{
+  height:116px;
+  border-left-color:rgba(148,163,184,.18);
+  border-bottom-color:rgba(148,163,184,.18);
+  background-image:repeating-linear-gradient(to top,rgba(148,163,184,.09) 0,rgba(148,163,184,.09) 1px,transparent 1px,transparent 25%);
+}
+.chart-plot .bar{width:14px;border-radius:5px 5px 2px 2px;}
+.x-labels span{color:#7c8aa1;}
+.hist-legend{margin-top:13px;}
+.hist-legend span{color:#8b99ae;}
+
+.results-card{padding-bottom:24px;}
+.results-card p{margin-bottom:18px;}
+.filters{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,180px));
+  align-items:end;
+  gap:12px;
+  padding:12px;
+  margin-bottom:16px;
+  border:1px solid rgba(148,163,184,.09);
+  border-radius:14px;
+  background:rgba(7,13,23,.46);
+}
+.filters label{gap:6px;color:#7f8da3;font-size:10px;letter-spacing:.04em;text-transform:uppercase;}
+.filters select{
+  width:100%;
+  min-width:0;
+  height:40px;
+  padding:0 38px 0 12px;
+  border-radius:11px;
+  border:1px solid rgba(148,163,184,.16);
+  background-color:#101b2d;
+  color:#e5edf7;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 2px 8px rgba(0,0,0,.12);
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.filters select:hover{border-color:rgba(148,163,184,.28);background-color:#122039;}
+.filters select:focus,
+.filters select:focus-visible{
+  outline:none;
+  border-color:rgba(96,165,250,.62);
+  box-shadow:0 0 0 3px rgba(96,165,250,.10),inset 0 1px 0 rgba(255,255,255,.03);
+}
+.filters select option{background:#0d1727;color:#e5edf7;}
+.table-scroll{
+  border:1px solid rgba(148,163,184,.09);
+  border-radius:14px;
+  background:#09111e;
+  scrollbar-width:thin;
+  scrollbar-color:#334155 transparent;
+}
+.table-scroll::-webkit-scrollbar{height:8px;}
+.table-scroll::-webkit-scrollbar-thumb{background:#334155;border-radius:999px;}
+table.res-table{font-size:12px;min-width:620px;border-collapse:separate;border-spacing:0;}
+table.res-table th{
+  position:sticky;top:0;z-index:1;
+  padding:11px 12px;
+  background:#0c1626;
+  color:#738197;
+  border-bottom:1px solid rgba(148,163,184,.11);
+}
+table.res-table th:first-child{border-top-left-radius:13px;}
+table.res-table th:last-child{border-top-right-radius:13px;}
+table.res-table td{padding:12px;border-bottom:1px solid rgba(148,163,184,.055);color:#bac6d7;}
+table.res-table tbody tr{transition:background .16s ease,transform .16s ease;}
+table.res-table tbody tr:hover td{background:rgba(96,165,250,.045);}
+table.res-table tbody tr:last-child td{border-bottom:0;}
+.pos-badge{width:27px;height:27px;border-radius:9px;font-size:11px;}
+.type-pill{
+  padding:5px 8px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,.10);
+  background:rgba(148,163,184,.055);
+  color:#98a7bb;
+}
+.type-pill .icon{width:12px;height:12px;}
+
+/* Make project names carry the visual weight of the row. */
+#tableBody td:nth-child(5){color:#e5edf7;font-weight:600;}
+#tableBody td:nth-child(2){color:#d5deea;font-weight:500;}
+
+@media(max-width:700px){
+  body{padding-left:14px;padding-right:14px;}
+  .hero{height:290px;}
+  .hero-copy{padding:22px;}
+  .neon-card,.results-card{padding:22px;}
+}
+@media(max-width:520px){
+  .hero-switcher,.switcher{overflow:auto;}
+  .hero-switcher button,.switcher button{min-width:120px;white-space:nowrap;}
+  .hero{height:270px;border-radius:20px;}
+  .hero-copy h1{font-size:30px;}
+  .filters{grid-template-columns:1fr;}
+  .hist-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:400px){
+  .hist-grid{grid-template-columns:1fr;}
+  .hero-copy h1{font-size:27px;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO 1 — Orbital -->
+  <div class="hero active" id="h1">
+    <svg viewBox="0 0 900 300" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="g1" cx="72%" cy="35%" r="75%">
+          <stop offset="0%" stop-color="#1c2c4d"/>
+          <stop offset="55%" stop-color="#0a1020"/>
+          <stop offset="100%" stop-color="#05080f"/>
+        </radialGradient>
+        <filter id="glow1"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="900" height="300" fill="url(#g1)"/>
+      <g transform="translate(660 130)" filter="url(#glow1)" opacity=".95">
+        <circle r="6" fill="#60a5fa"/>
+        <ellipse rx="150" ry="58" fill="none" stroke="#3b82f6" stroke-width="1.4" opacity=".7"/>
+        <ellipse rx="150" ry="58" fill="none" stroke="#fbbf24" stroke-width="1.4" opacity=".7" transform="rotate(60)"/>
+        <ellipse rx="150" ry="58" fill="none" stroke="#34d399" stroke-width="1.4" opacity=".7" transform="rotate(120)"/>
+        <circle cx="150" cy="0" r="4.5" fill="#60a5fa"/>
+        <circle cx="-75" cy="50.2" r="4.5" fill="#fbbf24"/>
+        <circle cx="-75" cy="-50.2" r="4.5" fill="#34d399"/>
+      </g>
+      <g stroke="#1e2a44" stroke-width="1">
+        <circle cx="660" cy="130" r="210" fill="none" opacity=".5"/>
+        <circle cx="660" cy="130" r="260" fill="none" opacity=".3"/>
+      </g>
+      <g fill="#3b4863">
+        <circle cx="90" cy="50" r="1.6"/><circle cx="150" cy="90" r="1.2"/><circle cx="60" cy="150" r="1.4"/>
+        <circle cx="220" cy="40" r="1.2"/><circle cx="300" cy="210" r="1.6"/><circle cx="120" cy="220" r="1.2"/>
+      </g>
+    </svg>
+    <div class="hero-copy">
+      <div class="k">Science exhibition</div>
+      <h1>Every experiment, one leaderboard</h1>
+      <p>Live scores and category results from this year's department showcase.</p>
+    </div>
+  </div>
+
+  <div class="switcher">
+    <button class="active" data-target="v3">Dashboard</button>
+    <button data-target="vresults">Results</button>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <symbol id="icon-atom" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>
+        <ellipse cx="12" cy="12" rx="9" ry="3.6"/>
+        <ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(60 12 12)"/>
+        <ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(120 12 12)"/>
+      </symbol>
+      <symbol id="icon-flask" viewBox="0 0 24 24">
+        <path d="M9 3h6"/>
+        <path d="M10 3v6.2L4.6 18.4A1.8 1.8 0 0 0 6.2 21h11.6a1.8 1.8 0 0 0 1.6-2.6L14 9.2V3"/>
+        <path d="M7.5 15h9"/>
+      </symbol>
+      <symbol id="icon-leaf" viewBox="0 0 24 24">
+        <path d="M20 4C10 4 4 10 4 18c0 0 0 2 2 2 8 0 14-6 14-16z"/>
+        <path d="M6 20C10 14 14 10 19 6"/>
+      </symbol>
+      <symbol id="icon-sigma" viewBox="0 0 24 24">
+        <path d="M18 5H6l6 7-6 7h12"/>
+      </symbol>
+      <symbol id="icon-cpu" viewBox="0 0 24 24">
+        <rect x="6" y="6" width="12" height="12" rx="2"/>
+        <rect x="9.5" y="9.5" width="5" height="5" rx="1"/>
+        <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>
+      </symbol>
+      <symbol id="icon-user" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="3.4"/>
+        <path d="M5 20c0-3.6 3.1-6.4 7-6.4s7 2.8 7 6.4"/>
+      </symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3"/>
+        <path d="M3.5 20c0-3.3 2.5-5.8 5.5-5.8s5.5 2.5 5.5 5.8"/>
+        <circle cx="17" cy="9" r="2.3"/>
+        <path d="M15.5 14.3c2.4.4 4 2.5 4 5.2"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="variation active" id="v3">
+    <div class="neon-card">
+      <h2>Department leaderboard</h2>
+      <p>Scores across the exhibition floor</p>
+      <div class="neon-row" data-height="90" style="--c:#60a5fa">
+        <div class="neon-top"><svg class="icon"><use href="#icon-atom"/></svg><span class="label">Physics</span><span class="score">90</span></div>
+        <div class="neon-track"><div class="neon-fill"></div></div>
+      </div>
+      <div class="neon-row" data-height="81" style="--c:#c084fc">
+        <div class="neon-top"><svg class="icon"><use href="#icon-sigma"/></svg><span class="label">Math</span><span class="score">81</span></div>
+        <div class="neon-track"><div class="neon-fill"></div></div>
+      </div>
+      <div class="neon-row" data-height="72" style="--c:#fbbf24">
+        <div class="neon-top"><svg class="icon"><use href="#icon-flask"/></svg><span class="label">Chemistry</span><span class="score">72</span></div>
+        <div class="neon-track"><div class="neon-fill"></div></div>
+      </div>
+      <div class="neon-row" data-height="65" style="--c:#fb7185">
+        <div class="neon-top"><svg class="icon"><use href="#icon-cpu"/></svg><span class="label">Computer Science</span><span class="score">65</span></div>
+        <div class="neon-track"><div class="neon-fill"></div></div>
+      </div>
+      <div class="neon-row" data-height="58" style="--c:#34d399">
+        <div class="neon-top"><svg class="icon"><use href="#icon-leaf"/></svg><span class="label">Biology</span><span class="score">58</span></div>
+        <div class="neon-track"><div class="neon-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="neon-card hist-card">
+      <h3>Entries by category</h3>
+      <div class="hist-grid" id="histGrid"></div>
+      <div class="hist-legend" id="histLegend"></div>
+    </div>
+  </div>
+
+  <div class="variation" id="vresults">
+    <div class="results-card">
+      <h2>Results</h2>
+      <p>Positions by category, loaded from results.csv</p>
+      <div class="filters">
+        <label>Category
+          <select id="catFilter">
+            <option value="all">All</option>
+            <option value="5-6">5–6</option>
+            <option value="7-8">7–8</option>
+            <option value="9-10">9–10</option>
+            <option value="11-12">11–12</option>
+          </select>
+        </label>
+        <label>Type
+          <select id="typeFilter">
+            <option value="all">All</option>
+            <option value="Individual">Individual</option>
+            <option value="Group">Group</option>
+          </select>
+        </label>
+      </div>
+      <div id="resultsSummary" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 10px;color:#65748a;font-size:11px;font-weight:600;letter-spacing:.01em;"><span>Showing all results</span></div>
+      <div class="table-scroll">
+        <table class="res-table">
+          <thead><tr><th>Pos</th><th>Department</th><th>Category</th><th>Type</th><th>Project</th></tr></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.switcher button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.switcher button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.variation').forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.target).classList.add('active');
+    animateActive();
+  });
+});
+
+function animateActive(){
+  document.querySelectorAll('.variation.active [data-height]').forEach((row,i)=>{
+    const h = row.getAttribute('data-height');
+    const fill = row.querySelector('.neon-fill');
+    fill.style.width='0%';
+    setTimeout(()=>{ fill.style.width = h + '%'; }, 150 + i*150);
+  });
+}
+animateActive();
+
+const FALLBACK_CSV =
+`Department,Category,Type,ProjectName,Position
+Physics,5-6,Group,Balloon Rocket Cars,1
+Physics,5-6,Individual,Static Electricity Show,2
+Chemistry,5-6,Group,Volcano Reaction,1
+Biology,5-6,Individual,Leaf Pigment Study,3
+Physics,7-8,Group,Simple Circuits Maze,1
+Chemistry,7-8,Individual,Crystal Growth,1
+Biology,7-8,Group,Ecosystem in a Bottle,2
+Chemistry,7-8,Group,pH Indicator Garden,3
+Physics,9-10,Individual,Bridge Load Testing,1
+Biology,9-10,Group,Water Filtration Model,1
+Chemistry,9-10,Group,Electrolysis Demo,2
+Physics,9-10,Group,Solar Oven Design,3
+Chemistry,11-12,Individual,Biodiesel from Waste Oil,1
+Physics,11-12,Group,Arduino Weather Station,2
+Biology,11-12,Individual,Antibiotic Resistance Model,3
+Math,5-6,Individual,Tangram Puzzle Patterns,2
+Math,5-6,Group,Magic Number Squares,3
+Computer Science,5-6,Group,Scratch Maze Game,3
+Math,7-8,Group,Geometry of Soap Bubbles,1
+Computer Science,7-8,Individual,Rock Paper Scissors Bot,2
+Math,9-10,Individual,Probability Carnival Games,2
+Computer Science,9-10,Group,School FAQ Chatbot,1
+Computer Science,9-10,Individual,Typing Speed Trainer,3
+Math,11-12,Group,Fractal Art Explorer,1
+Computer Science,11-12,Individual,Sorting Algorithm Visualizer,2
+Physics,11-12,Individual,Pendulum Wave Machine,3`;
+
+let RESULTS = [];
+let currentCat = 'all';
+let currentType = 'all';
+let resultsLoaded = false;
+
+function parseCSV(text){
+  const lines = text.trim().split(/\r?\n/);
+  const headers = lines.shift().split(',').map(h=>h.trim());
+  return lines.filter(l=>l.trim()).map(line=>{
+    const cells = line.split(',').map(c=>c.trim());
+    const row = {};
+    headers.forEach((h,i)=> row[h] = cells[i] || '');
+    return row;
+  });
+}
+
+async function loadResults(){
+  if(resultsLoaded) return;
+  resultsLoaded = true;
+  try{
+    const res = await fetch('results.csv');
+    if(!res.ok) throw new Error('no file');
+    RESULTS = parseCSV(await res.text());
+  }catch(e){
+    RESULTS = parseCSV(FALLBACK_CSV);
+  }
+  renderTable();
+  renderHistograms();
+}
+
+const DEPT_COLORS = {Physics:'#60a5fa', Math:'#c084fc', Chemistry:'#fbbf24', 'Computer Science':'#fb7185', Biology:'#34d399'};
+const DEPT_SHORT = {Physics:'Ph', Math:'Ma', Chemistry:'Ch', 'Computer Science':'CS', Biology:'Bi'};
+const DEPT_ORDER = ['Physics','Math','Chemistry','Computer Science','Biology'];
+const DEPT_FALLBACK = ['#a78bfa','#38bdf8','#fb7185','#facc15'];
+function deptColor(dept){
+  if(DEPT_COLORS[dept]) return DEPT_COLORS[dept];
+  const depts = [...new Set(RESULTS.map(r=>r.Department))].filter(d=>!DEPT_COLORS[d]);
+  return DEPT_FALLBACK[depts.indexOf(dept) % DEPT_FALLBACK.length];
+}
+const CATS = ['5-6','7-8','9-10','11-12'];
+
+function animateBars(root){
+  root.querySelectorAll('[data-pct]').forEach((el,i)=>{
+    el.style.height = '0%';
+    setTimeout(()=>{ el.style.height = el.dataset.pct + '%'; }, 100 + i*70);
+  });
+}
+
+function renderHistograms(){
+  const found = new Set(RESULTS.map(r=>r.Department));
+  const depts = [...DEPT_ORDER.filter(d=>found.has(d)), ...[...found].filter(d=>!DEPT_ORDER.includes(d))];
+  const perCat = CATS.map(c=> depts.map(d=> RESULTS.filter(r=>r.Category===c && r.Department===d).length));
+  const max = Math.max(1, ...perCat.flat());
+  const yTicks = [max, Math.round(max/2), 0];
+
+  const grid = document.getElementById('histGrid');
+  grid.innerHTML = CATS.map((c,ci)=>`
+    <div class="mini-chart">
+      <h4>Classes ${c.replace('-','–')}</h4>
+      <div class="chart-row">
+        <div class="y-axis">${yTicks.map(t=>`<span>${t}</span>`).join('')}</div>
+        <div class="chart-plot">
+          ${depts.map((d,di)=>`<div class="bar" data-pct="${perCat[ci][di]/max*100}" style="background:${deptColor(d)};box-shadow:0 0 8px ${deptColor(d)}"></div>`).join('')}
+        </div>
+      </div>
+      <div class="x-labels">${depts.map(d=>`<span title="${d}">${DEPT_SHORT[d]||d.slice(0,2)}</span>`).join('')}</div>
+    </div>`).join('');
+
+  document.getElementById('histLegend').innerHTML = depts.map(d=>
+    `<span><i style="background:${deptColor(d)}"></i>${d}</span>`).join('');
+
+  animateBars(grid);
+}
+
+function filtered(){
+  return RESULTS.filter(r =>
+    (currentCat === 'all' || r.Category === currentCat) &&
+    (currentType === 'all' || r.Type === currentType)
+  );
+}
+
+function typeIcon(t){
+  return t && t.toLowerCase().startsWith('g') ? 'icon-users' : 'icon-user';
+}
+
+function renderTable(){
+  const rows = filtered().slice().sort((a,b)=> (a.Category+a.Position).localeCompare(b.Category+b.Position));
+  const summary = document.getElementById('resultsSummary');
+  summary.innerHTML = `<span>${rows.length} ${rows.length === 1 ? 'result' : 'results'}</span><span>${currentCat === 'all' ? 'All classes' : 'Classes ' + currentCat.replace('-', '–')} · ${currentType === 'all' ? 'All types' : currentType}</span>`;
+  document.getElementById('tableBody').innerHTML = rows.length ? rows.map(r=>`
+    <tr>
+      <td><span class="pos-badge pos-${r.Position}">${r.Position}</span></td>
+      <td>${r.Department}</td>
+      <td>${r.Category}</td>
+      <td><span class="type-pill"><svg class="icon"><use href="#${typeIcon(r.Type)}"/></svg>${r.Type}</span></td>
+      <td>${r.ProjectName}</td>
+    </tr>`).join('') : `<tr><td colspan="5" style="padding:28px;text-align:center;color:#718096;">No results match the selected filters.</td></tr>`;
+}
+
+document.getElementById('catFilter').addEventListener('change', e=>{
+  currentCat = e.target.value;
+  renderTable();
+});
+document.getElementById('typeFilter').addEventListener('change', e=>{
+  currentType = e.target.value;
+  renderTable();
+});
+
+loadResults();
+</script>
+</body>
+</html>
