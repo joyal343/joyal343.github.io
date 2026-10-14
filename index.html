@@ -63,10 +63,10 @@ body{font-family:'Inter',Arial,sans-serif;background:var(--bg);background-image:
 .mini-chart h4{font-size:11px;font-weight:700;color:#93c5fd;margin-bottom:10px;letter-spacing:.01em;}
 .chart-row{display:flex;gap:6px;}
 .y-axis{display:flex;flex-direction:column;justify-content:space-between;height:110px;font-size:10px;color:var(--dim);font-variant-numeric:tabular-nums;text-align:right;padding-right:6px;flex-shrink:0;}
-.chart-plot{flex:1;height:110px;display:flex;align-items:flex-end;justify-content:space-around;gap:4px;padding:0 2px;border-left:1px solid #334155;border-bottom:1px solid #334155;background-image:repeating-linear-gradient(to top,#1e293b 0,#1e293b 1px,transparent 1px,transparent 25%);}
+.chart-plot{flex:1;height:110px;display:flex;align-items:flex-end;justify-content:space-around;gap:6px;padding:0 2px;border-left:1px solid #334155;border-bottom:1px solid #334155;background-image:repeating-linear-gradient(to top,#1e293b 0,#1e293b 1px,transparent 1px,transparent 25%);}
 .chart-plot .bar{width:15px;border-radius:3px 3px 0 0;height:0;transition:height 1s cubic-bezier(.4,0,.2,1);}
 .x-labels{display:flex;justify-content:space-around;padding-left:26px;margin-top:5px;}
-.x-labels span{font-size:9px;color:var(--dim);font-weight:600;width:14px;text-align:center;white-space:nowrap;overflow:visible;}
+.x-labels span{font-size:9px;color:var(--dim);font-weight:600;width:15px;text-align:center;}
 .hist-legend{display:flex;gap:14px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
 .hist-legend span{display:flex;align-items:center;gap:5px;font-size:11px;color:#94a3b8;font-weight:600;}
 .hist-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
@@ -272,7 +272,7 @@ body::before{
   border-bottom-color:rgba(148,163,184,.18);
   background-image:repeating-linear-gradient(to top,rgba(148,163,184,.09) 0,rgba(148,163,184,.09) 1px,transparent 1px,transparent 25%);
 }
-.chart-plot .bar{width:14px;border-radius:5px 5px 2px 2px;}
+.chart-plot .bar{width:17px;border-radius:5px 5px 2px 2px;}
 .x-labels span{color:#7c8aa1;}
 .hist-legend{margin-top:13px;}
 .hist-legend span{color:#8b99ae;}
@@ -434,14 +434,6 @@ table.res-table tbody tr:last-child td{border-bottom:0;}
         <path d="M20 4C10 4 4 10 4 18c0 0 0 2 2 2 8 0 14-6 14-16z"/>
         <path d="M6 20C10 14 14 10 19 6"/>
       </symbol>
-      <symbol id="icon-sigma" viewBox="0 0 24 24">
-        <path d="M18 5H6l6 7-6 7h12"/>
-      </symbol>
-      <symbol id="icon-cpu" viewBox="0 0 24 24">
-        <rect x="6" y="6" width="12" height="12" rx="2"/>
-        <rect x="9.5" y="9.5" width="5" height="5" rx="1"/>
-        <path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>
-      </symbol>
       <symbol id="icon-user" viewBox="0 0 24 24">
         <circle cx="12" cy="8" r="3.4"/>
         <path d="M5 20c0-3.6 3.1-6.4 7-6.4s7 2.8 7 6.4"/>
@@ -463,16 +455,8 @@ table.res-table tbody tr:last-child td{border-bottom:0;}
         <div class="neon-top"><svg class="icon"><use href="#icon-atom"/></svg><span class="label">Physics</span><span class="score">90</span></div>
         <div class="neon-track"><div class="neon-fill"></div></div>
       </div>
-      <div class="neon-row" data-height="81" style="--c:#c084fc">
-        <div class="neon-top"><svg class="icon"><use href="#icon-sigma"/></svg><span class="label">Math</span><span class="score">81</span></div>
-        <div class="neon-track"><div class="neon-fill"></div></div>
-      </div>
       <div class="neon-row" data-height="72" style="--c:#fbbf24">
         <div class="neon-top"><svg class="icon"><use href="#icon-flask"/></svg><span class="label">Chemistry</span><span class="score">72</span></div>
-        <div class="neon-track"><div class="neon-fill"></div></div>
-      </div>
-      <div class="neon-row" data-height="65" style="--c:#fb7185">
-        <div class="neon-top"><svg class="icon"><use href="#icon-cpu"/></svg><span class="label">Computer Science</span><span class="score">65</span></div>
         <div class="neon-track"><div class="neon-fill"></div></div>
       </div>
       <div class="neon-row" data-height="58" style="--c:#34d399">
@@ -510,7 +494,9 @@ table.res-table tbody tr:last-child td{border-bottom:0;}
           </select>
         </label>
       </div>
-      <div id="resultsSummary" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 10px;color:#65748a;font-size:11px;font-weight:600;letter-spacing:.01em;"><span>Showing all results</span></div>
+      <div id="resultsSummary" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 2px 10px;color:#65748a;font-size:11px;font-weight:600;letter-spacing:.01em;">
+        <span>Showing all results</span>
+      </div>
       <div class="table-scroll">
         <table class="res-table">
           <thead><tr><th>Pos</th><th>Department</th><th>Category</th><th>Type</th><th>Project</th></tr></thead>
@@ -523,6 +509,8 @@ table.res-table tbody tr:last-child td{border-bottom:0;}
 </div>
 
 <script>
+
+  // When I click a button to shift the pages the below function is called
 document.querySelectorAll('.switcher button').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.switcher button').forEach(b=>b.classList.remove('active'));
@@ -545,34 +533,34 @@ animateActive();
 
 const FALLBACK_CSV =
 `Department,Category,Type,ProjectName,Position
-Physics,5-6,Group,Balloon Rocket Cars,1
-Physics,5-6,Individual,Static Electricity Show,2
+Physics,5-6,Group,Balloon Rocket Cars,3
 Chemistry,5-6,Group,Volcano Reaction,1
-Biology,5-6,Individual,Leaf Pigment Study,3
-Physics,7-8,Group,Simple Circuits Maze,1
-Chemistry,7-8,Individual,Crystal Growth,1
-Biology,7-8,Group,Ecosystem in a Bottle,2
-Chemistry,7-8,Group,pH Indicator Garden,3
+Math,5-6,Group,Fullers Nummbers,2
+Computer Science,5-6,Individual,Fabonnici Series,2
+Math,5-6,Individual,Calculus,3
 Physics,9-10,Individual,Bridge Load Testing,1
+Physics,9-10,Individual,Bridge Load Testing,3
 Biology,9-10,Group,Water Filtration Model,1
-Chemistry,9-10,Group,Electrolysis Demo,2
-Physics,9-10,Group,Solar Oven Design,3
-Chemistry,11-12,Individual,Biodiesel from Waste Oil,1
-Physics,11-12,Group,Arduino Weather Station,2
-Biology,11-12,Individual,Antibiotic Resistance Model,3
-Math,5-6,Individual,Tangram Puzzle Patterns,2
-Math,5-6,Group,Magic Number Squares,3
-Computer Science,5-6,Group,Scratch Maze Game,3
-Math,7-8,Group,Geometry of Soap Bubbles,1
-Computer Science,7-8,Individual,Rock Paper Scissors Bot,2
-Math,9-10,Individual,Probability Carnival Games,2
-Computer Science,9-10,Group,School FAQ Chatbot,1
-Computer Science,9-10,Individual,Typing Speed Trainer,3
-Math,11-12,Group,Fractal Art Explorer,1
-Computer Science,11-12,Individual,Sorting Algorithm Visualizer,2
-Physics,11-12,Individual,Pendulum Wave Machine,3`;
+`;
+// Physics,5-6,Individual,Static Electricity Show,2
+// Chemistry,5-6,Group,Volcano Reaction,1
+// Biology,5-6,Individual,Leaf Pigment Study,3
+// Physics,7-8,Group,Simple Circuits Maze,1
+// Chemistry,7-8,Individual,Crystal Growth,1
+// Biology,7-8,Group,Ecosystem in a Bottle,2
+// Chemistry,7-8,Group,pH Indicator Garden,3
+// Physics,9-10,Individual,Bridge Load Testing,1
+// Biology,9-10,Group,Water Filtration Model,1
+// Chemistry,9-10,Group,Electrolysis Demo,2
+// Physics,9-10,Group,Solar Oven Design,3
+// Chemistry,11-12,Individual,Biodiesel from Waste Oil,1
+// Physics,11-12,Group,Arduino Weather Station,2
+// Biology,11-12,Individual,Antibiotic Resistance Model,3
+// Physics,11-12,Individual,Pendulum Wave Machine,3`;
 
-let RESULTS = [];
+let RESULTS = []; // This is the array in which data is stored
+const CATS = ['5-6','7-8','9-10','11-12']; // Categories to filter by
+const TYPE_ORDER = ['Individual','Group']; // Types to filter by
 let currentCat = 'all';
 let currentType = 'all';
 let resultsLoaded = false;
@@ -588,6 +576,7 @@ function parseCSV(text){
   });
 }
 
+// This renders the table and the histograms
 async function loadResults(){
   if(resultsLoaded) return;
   resultsLoaded = true;
@@ -602,16 +591,13 @@ async function loadResults(){
   renderHistograms();
 }
 
-const DEPT_COLORS = {Physics:'#60a5fa', Math:'#c084fc', Chemistry:'#fbbf24', 'Computer Science':'#fb7185', Biology:'#34d399'};
-const DEPT_SHORT = {Physics:'Ph', Math:'Ma', Chemistry:'Ch', 'Computer Science':'CS', Biology:'Bi'};
-const DEPT_ORDER = ['Physics','Math','Chemistry','Computer Science','Biology'];
+const DEPT_COLORS = {Physics:'#60a5fa', Chemistry:'#fbbf24', Biology:'#34d399'};
 const DEPT_FALLBACK = ['#a78bfa','#38bdf8','#fb7185','#facc15'];
 function deptColor(dept){
   if(DEPT_COLORS[dept]) return DEPT_COLORS[dept];
   const depts = [...new Set(RESULTS.map(r=>r.Department))].filter(d=>!DEPT_COLORS[d]);
   return DEPT_FALLBACK[depts.indexOf(dept) % DEPT_FALLBACK.length];
 }
-const CATS = ['5-6','7-8','9-10','11-12'];
 
 function animateBars(root){
   root.querySelectorAll('[data-pct]').forEach((el,i)=>{
@@ -621,8 +607,7 @@ function animateBars(root){
 }
 
 function renderHistograms(){
-  const found = new Set(RESULTS.map(r=>r.Department));
-  const depts = [...DEPT_ORDER.filter(d=>found.has(d)), ...[...found].filter(d=>!DEPT_ORDER.includes(d))];
+  const depts = [...new Set(RESULTS.map(r=>r.Department))];
   const perCat = CATS.map(c=> depts.map(d=> RESULTS.filter(r=>r.Category===c && r.Department===d).length));
   const max = Math.max(1, ...perCat.flat());
   const yTicks = [max, Math.round(max/2), 0];
@@ -637,7 +622,7 @@ function renderHistograms(){
           ${depts.map((d,di)=>`<div class="bar" data-pct="${perCat[ci][di]/max*100}" style="background:${deptColor(d)};box-shadow:0 0 8px ${deptColor(d)}"></div>`).join('')}
         </div>
       </div>
-      <div class="x-labels">${depts.map(d=>`<span title="${d}">${DEPT_SHORT[d]||d.slice(0,2)}</span>`).join('')}</div>
+      <div class="x-labels">${depts.map(d=>`<span title="${d}">${d.slice(0,2)}</span>`).join('')}</div>
     </div>`).join('');
 
   document.getElementById('histLegend').innerHTML = depts.map(d=>
@@ -646,6 +631,7 @@ function renderHistograms(){
   animateBars(grid);
 }
 
+// Filters the results based on the currently selected category and type
 function filtered(){
   return RESULTS.filter(r =>
     (currentCat === 'all' || r.Category === currentCat) &&
@@ -657,8 +643,14 @@ function typeIcon(t){
   return t && t.toLowerCase().startsWith('g') ? 'icon-users' : 'icon-user';
 }
 
+// This function renders the main table
 function renderTable(){
-  const rows = filtered().slice().sort((a,b)=> (a.Category+a.Position).localeCompare(b.Category+b.Position));
+  // sorting by category first then by position
+  const rows = filtered().sort((a,b)=>
+    (CATS.indexOf(a.Category) - CATS.indexOf(b.Category)) ||
+    (TYPE_ORDER.indexOf(a.Type) - TYPE_ORDER.indexOf(b.Type)) ||
+    (Number(a.Position) - Number(b.Position))
+  );
   const summary = document.getElementById('resultsSummary');
   summary.innerHTML = `<span>${rows.length} ${rows.length === 1 ? 'result' : 'results'}</span><span>${currentCat === 'all' ? 'All classes' : 'Classes ' + currentCat.replace('-', '–')} · ${currentType === 'all' ? 'All types' : currentType}</span>`;
   document.getElementById('tableBody').innerHTML = rows.length ? rows.map(r=>`
